@@ -1,0 +1,133 @@
+"
+- CCPS506_Lab1_501050712.txt
+- Nicolas Metzler
+- Student ID: 501050712
+- Lab #1 - Intro to Pharo, Smalltalk Basics
+- CCPS506_Lab1_501050712.txt
+- Nicolas Metzler
+- Student ID: 501050712
+- Lab #1 - Intro to Pharo, Smalltalk Basics
+- CCPS 506 Section 610
+- Instructor: Alex Ufkes
+- Purpose: To learn how to use and basics of Pharo and the Smalltalk Programming Language.
+- 
+- I hereby attest that I am the sole owner and author of this code and that to the best of my knowledge, this code has not infringed on anyone’s copyright. Credit for any ideas, coding, and other materials used to develop this code has been given to the owners of the sources used in accordance to the rules of Ryerson's Academic Integrity Policy.
+-
+"
+
+
+"Question 1 (Also some variables/elements used for Questions 2 and 3)"
+
+"Initialization of variables"
+| myFunctions counter current position total answer chosenArray arrayLen arr1 arr2 arr3 newArray blckClosure |
+
+"Arrays"
+arr1 := #(84 45 54 456 456 33 34).
+arr2 := #(706 348 435 430 278 736 803 683 248 873).
+arr3 := #(323 274 711 918 772 727 13 724 93 215).
+
+"Setting Variables"
+"Initialize Class Lab1"
+myFunctions := Lab1 new.
+answer := 0.
+total := 0.
+counter := 0.
+position := 1.
+current := 0.
+"Use this variable to choose which array to use"
+chosenArray := arr1.
+arrayLen := chosenArray size.
+
+"whileTrue: loop to find and add all even numbers. Also counts how many are found"
+[position <= arrayLen] 
+whileTrue:[
+	current := (chosenArray at: position).
+
+	(myFunctions isEven: current) 	
+	ifTrue:[
+		total := total + current
+	]; 
+	ifTrue:[
+		counter := counter + 1
+	].
+	position := position + 1.
+].
+
+"do: loop to find and add all even numbers. Also counts how many are found"
+chosenArray 
+do:[
+	:numero | 	(myFunctions isEven: numero) 
+	ifTrue:[
+		total := total + numero
+	]; 
+	ifTrue:[
+		counter := counter + 1
+	].
+].	
+
+"Calculate average of found numbers"
+answer := total / counter asFloat.
+
+"Display answer in the transcript"
+Transcript clear;
+show: 'Q1: The average of even numbers in the chosen array is: ';
+show: answer.
+
+
+"Question 2"
+
+"Reset/Declare needed variables"
+arrayLen := 10.
+"Create new array with specified length"
+newArray := Array new: arrayLen.
+position := 1.
+
+"whileTrue: loop that fills the array with 10 random numbers, ranging from 0 to 1000"
+[position <= arrayLen] 
+whileTrue:[
+	newArray at: position 
+	put: (0 to: 1000) atRandom. 
+	position := position + 1.
+].
+
+"Display answer in the transcript"
+Transcript cr;
+show: 'Q2: This is the array created by the program: ';
+show: newArray.
+
+
+"Question 3"
+
+"Reset answer variable"
+answer := 0.
+
+"do: loop that finds the largest odd number, and assigns answer that value"
+chosenArray 
+do:[
+	:numero | (myFunctions isEven: numero) 
+	ifFalse:[ 
+		answer < numero 
+		ifTrue:[
+			answer := numero
+		]
+	]
+].
+
+"Display answer in the transcript"
+Transcript cr;
+show: 'Q3: The largest odd number in the chosen array is: ';
+show: answer.
+
+
+"Methods needed for code to work"
+"Package name: CCPS506"
+"Class name: Lab1"
+
+"isEven: method"
+isEven: num
+	"This is to check whether a number is even or odd"
+			
+	| answer |
+	"Either return True or False if the number is divisible by 2"
+	answer := (num \\ 2) = 0.
+	^ answer.
