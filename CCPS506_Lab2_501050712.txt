@@ -1,0 +1,326 @@
+"
+- CCPS506_Lab1_501050712.txt
+- Nicolas Metzler
+- Student ID: 501050712
+- Lab #1 - Intro to Pharo, Smalltalk Basics
+- CCPS506_Lab2_501050712.txt
+- Nicolas Metzler
+- Student ID: 501050712
+- Lab #2 - Classes and Methods in Smalltalk
+- CCPS 506 Section 610
+- Instructor: Alex Ufkes
+- Purpose: To create and implement methods related to Poker in Pharo and the Smalltalk Programming Language.
+- 
+- I hereby attest that I am the sole owner and author of this code and that to the best of my knowledge, this code has not infringed on anyone’s copyright. Credit for any ideas, coding, and other materials used to develop this code has been given to the owners of the sources used in accordance to the rules of Ryerson's Academic Integrity Policy.
+-
+"
+
+
+"Question 1) pokerValidate: method"
+
+
+pokerValidate: arr
+	"Validates array as a poker hand"
+
+	"Check if arrray is the correct size"
+	arr size = 5 
+	ifFalse: [
+		^ false.
+		].
+
+	"do: loop to verify all items of the array"
+	arr
+	do:[
+	"Verify all items are integers"
+	:numero | 	(numero class = SmallInteger)
+		ifFalse: [ 
+			^ false.
+			 ].
+		"Verify all numbers are within range"
+		(numero >= 1) 
+		ifTrue:[
+			(numero <= 13)
+			ifFalse: [
+				^ false
+				].
+		
+			]
+		ifFalse:[
+			^ false
+		].
+	].
+	
+	"Base case, if all tests are passed this is a valid array"
+	^ true
+
+
+"Question 2) pokerThreeOfAKind: method"
+
+pokerThreeOfAKind: arr
+	"Checks if hand is three of a kind"
+	
+	"Create variables and pokerValidate: method"
+	| sortedArray answer myFunctions position counter currentNum nextNum |
+	myFunctions := self class new.
+	
+	"Validate Array"
+	(myFunctions pokerValidate: arr)
+	ifFalse: [ 
+		^ false.
+		 ].
+	
+	"Sort the array to make finding combinations easier"
+	sortedArray := arr sort.
+
+	"Set variables"
+	position := 1.
+	counter := 0.
+	answer := false.
+	
+	"Loop to check the hand"
+	[position <= 4] 
+	whileTrue:[
+		currentNum := (sortedArray at: position).
+		nextNum := (sortedArray at: (position + 1)).
+		(currentNum = nextNum)
+		"If the next number is the same, add to the counter"
+		ifTrue: [ 
+			counter := counter + 1.
+			"Check if we're at the end of the array"
+			(position = 4)
+			ifTrue: [ 
+				"Check if we have a trio"
+				(counter = 2)
+				ifTrue: [ 
+					^ true
+					 ]
+				ifFalse: [ 
+					^ false.
+					 ].
+				 ].
+			 ]
+		"If not, reset counter, check if a match of 2 is found"
+		ifFalse: [ 
+			"Check if a pair is found"
+			"This would make it a pair or full house potentially, so we must return false"
+			(counter = 1)
+			ifTrue:[
+				^ false.
+				].
+			"Check if a group of three are found"
+			(counter = 2)
+			ifTrue:[
+				"We use a variable instead of returning in case there is a full house"
+				answer := true.
+				].
+				"Reset the counter"
+			counter := 0.
+			 ].
+		position := position + 1.
+		].
+	
+	"If not returned already, we return the answer"	
+	^ answer.
+
+
+"Question 3) pokerStraight: method"
+
+pokerStraight: arr
+	"Check if hand is a straight"
+
+	"Create variables and pokerValidate: method"		
+	| myFunctions position sortedArray |
+	myFunctions := self class new.
+	
+	"Validate Array"
+	(myFunctions pokerValidate: arr)
+	ifFalse: [ 
+		^ false.
+		 ].
+	
+	"Sort the array to make finding combinations easier"
+	sortedArray := arr sort.
+
+	"Set variables"
+	position := 1.
+	
+	"Check if Ace is high"
+	"Set the starting position to 2 if Ace is high followed by 10"
+	((sortedArray at: 1) = 1)
+	ifTrue: [ 
+		((sortedArray at: 2) = 10)
+		ifTrue: [ 
+			position := 2
+			 ].
+		 ].
+	
+	"Loop to check the hand"
+	[position <= 4]
+	whileTrue:[
+		"Check if next item is the next number"
+		"If false, it is not a straight"
+		((sortedArray at: (position + 1)) = ((sortedArray at: position) + 1))
+		ifFalse: [ 
+			^ false.
+			 ].
+		position := position + 1.
+		].
+	
+	"Base case, if all tests are passed this hand is a straight"
+	^ true.
+	
+
+"Question 4) pokerFullHouse: method"
+
+pokerFullHouse: arr
+	"Check if hand is a Full House"
+
+	"Create variables and pokerValidate: method"		
+	| sortedArray myFunctions position counter currentNum nextNum pairPresent threePresent|
+	myFunctions := self class new.
+	
+	"Validate Array"
+	(myFunctions pokerValidate: arr)
+	ifFalse: [ 
+		^ false.
+		 ].
+	
+	"Sort the array to make finding combinations easier"
+	sortedArray := arr sort.
+
+	"Set variables"
+	position := 1.
+	counter := 0.
+	pairPresent  := false.
+	threePresent  := false.
+	
+	"Loop to check the hand"
+	[position <= 4] 
+	whileTrue:[
+		currentNum := (sortedArray at: position).
+		nextNum := (sortedArray at: (position + 1)).
+		(currentNum = nextNum)
+		"If the next number is the same, add to the counter"
+		ifTrue: [ 
+			counter := counter + 1.
+			"Is this the end of the hand?"
+			(position = 4)
+			ifTrue: [ 
+				"Check if it is a pair"
+				(counter = 1)
+				ifTrue: [ 
+					"Check if we have a full house"
+					(threePresent = true)
+					ifTrue: [
+						^ true.
+					].
+				].
+				"Check if it is a three"
+				(counter = 2)
+				ifTrue: [ 
+					"Check if we have a full house"
+					(pairPresent = true)
+					ifTrue: [
+						^ true.
+					].
+				 ].
+			].
+		]
+		"If not, reset counter, check if a match of 2 or 3 is found"
+		ifFalse: [ 
+			"Check if a pair is found"
+			(counter = 1)
+			ifTrue:[
+				pairPresent := true.
+				].
+			"Check if a group of three are found"
+			(counter = 2)
+			ifTrue:[
+				threePresent := true.
+				].
+			counter := 0.
+			 ].
+		position := position + 1.
+		].
+
+	"Base case, return false if a full house isn't found
+	^ false.
+
+
+"Question 5) pokerTwoPair: method"
+
+pokerTwoPair: arr
+	"Check if hand contains two pairs"
+
+	"Create variables and pokerValidate: method"		
+	| sortedArray myFunctions position counter currentNum nextNum pair1Present pair2Present |
+	myFunctions := self class new.
+	
+	"Validate Array"
+	(myFunctions pokerValidate: arr)
+	ifFalse: [ 
+		^ false.
+		 ].
+	
+	"Sort the array to make finding combinations easier"
+	sortedArray := arr sort.
+
+	"Set variables"
+	position := 1.
+	counter := 0.
+	pair1Present  := false.
+	pair2Present  := false.
+	
+	"Loop to check the hand"
+	[position <= 4] 
+	whileTrue:[
+		currentNum := (sortedArray at: position).
+		nextNum := (sortedArray at: (position + 1)).
+		(currentNum = nextNum)
+		"If the next number is the same, add to the counter"
+		ifTrue: [ 
+			counter := counter + 1.
+			"Is this the end of the hand?"
+			(position = 4)
+			ifTrue: [
+				"Check if it is a pair"
+				(counter = 1)
+				ifTrue: [ 
+					"If we already have one pair, this is two pairs"
+					(pair1Present = true)
+					ifTrue: [
+						^ true.
+					].
+				].
+			].
+		]
+		"If not, reset counter, check if a match of 2 is found"
+		ifFalse: [ 
+			"Check if a pair is found"
+			(counter = 1)
+			ifTrue:[
+				"Check if one pair is already found"
+				(pair1Present = true)
+				ifTrue: [
+					pair2Present := true.
+				]
+				ifFalse: [
+					pair1Present := true.
+				].
+			counter := 0.
+			 ].
+		].
+		position := position + 1.
+	].
+
+	"Check if we found two pairs"
+	(pair1Present = true)
+	ifTrue: [
+		(pair2Present = true)
+		ifTrue: [
+				^ true.
+		].
+	].
+
+	"Base case, return false if two pairs are not found"
+	^ false.
